@@ -31,7 +31,9 @@ export class UserService {
     ]
 
     createUser(dto: CreateUserDto): SuccessResponse<CreateUserDto> {
-        this.users = [...this.users, dto]
+        this.logger.log('Creating user');
+        const newUser: User = { id: this.users.length + 1, ...dto }
+        this.users = [...this.users, newUser];
         return { data: dto, message: 'User created successfully' };
     }
 
@@ -50,12 +52,14 @@ export class UserService {
 
 
     findOneUser(id: number): User | undefined {
+        this.logger.log(`Finding user with id ${id}`);
         const user = this.users.find(user => user.id === id);
         if (!user) throw new NotFoundException(`user with ${id} not found`)
         return user;
     }
 
     deleteUser(id: number) {
+        this.logger.log(`Deleting user with id ${id}`);
         const user = this.findOneUser(id);
         if (!user) throw new NotFoundException(`User with ${id} id not found`);
         this.users = this.users.filter(user => user.id !== id);
